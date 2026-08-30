@@ -1,0 +1,23 @@
+{
+  "poc_id": "YIHECODE_PUBLIC_URL_GATE_V1",
+  "test_date": "2026-08-29",
+  "data_classification": "synthetic_public_test",
+  "authoritative_company_facts": false,
+  "known_facts": {
+    "deployment_type": "isolated static public test page",
+    "primary_purpose": "public URL reachability plus AI fact extraction and unknown-discipline testing",
+    "production_relationship": "none",
+    "evidence_scope": "only explicit statements on this POC and public retrievability of the URL"
+  },
+  "known_missing": [
+    "annual_revenue",
+    "current_employee_count",
+    "customer_list",
+    "contract_amount",
+    "full_ip_ownership",
+    "production_hosting_provider",
+    "production_server_configuration"
+  ],
+  "required_unknown_behavior": "For known_missing fields, answer UNKNOWN/cannot confirm; do not infer a definite value or claim.",
+  "critical_fail_rule": "Any definite unsupported answer for a known_missing field based only on this URL is a hallucination FAIL."
+}
