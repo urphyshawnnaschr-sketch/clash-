@@ -1,8 +1,6 @@
-name: Verify isolated POC public reachability
+name: Verify public vendor dossier reachability
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -12,56 +10,4 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
-      - name: Anonymous public HTTP and AI-reader verification
-        shell: bash
-        run: |
-          set -euo pipefail
-          POC_COMMIT='05c3a15270c18513bd8b570a201d40bf313fdc22'
-          HOME_URL='https://github.com/urphyshawnnaschr-sketch/clash-'
-          PINNED_URL="https://github.com/urphyshawnnaschr-sketch/clash-/tree/${POC_COMMIT}"
-          RAW_JSON="https://raw.githubusercontent.com/urphyshawnnaschr-sketch/clash-/${POC_COMMIT}/facts.json"
-          JINA_URL="https://r.jina.ai/https://github.com/urphyshawnnaschr-sketch/clash-"
-
-          verify_html() {
-            local url="$1"
-            local prefix="$2"
-            echo "=== ${prefix} HEADERS ==="
-            curl --fail --silent --show-error --location --head "$url" | tee "/tmp/${prefix}.headers"
-            grep -Eiq '^content-type:[[:space:]]*text/html([;[:space:]]|$)' "/tmp/${prefix}.headers"
-            echo "=== ${prefix} BODY ==="
-            curl --fail --silent --show-error --location "$url" -o "/tmp/${prefix}.html"
-            grep -Fq 'YIHECODE_PUBLIC_URL_GATE_V1' "/tmp/${prefix}.html"
-            grep -Fq 'Known Missing' "/tmp/${prefix}.html"
-          }
-
-          verify_html "$HOME_URL" HOME
-          verify_html "$PINNED_URL" PINNED
-
-          echo '=== MACHINE READABLE COMPANION ==='
-          curl --fail --silent --show-error --location "$RAW_JSON" -o /tmp/facts.json
-          python - <<'PY'
-          import json
-          with open('/tmp/facts.json', encoding='utf-8') as f:
-              data=json.load(f)
-          assert data['poc_id']=='YIHECODE_PUBLIC_URL_GATE_V1'
-          assert data['authoritative_company_facts'] is False
-          assert 'annual_revenue' in data['known_missing']
-          print('RAW_JSON_VALID=PASS')
-          PY
-
-          echo '=== LLM-ORIENTED READER ==='
-          curl --fail --silent --show-error --location "$JINA_URL" -o /tmp/jina.txt
-          grep -Fq 'YIHECODE_PUBLIC_URL_GATE_V1' /tmp/jina.txt
-          grep -Fq 'Known Missing' /tmp/jina.txt
-          grep -Fq 'Annual revenue' /tmp/jina.txt
-          echo 'LLM_READER_PUBLIC_RETRIEVAL=PASS'
-
-          echo 'PUBLIC_HTML_CONTENT_TYPE=PASS'
-          echo 'PUBLIC_HTML_SERVER_RENDERED_MARKERS=PASS'
-          echo 'ANONYMOUS_PUBLIC_HTTP_REACHABILITY=PASS'
-          echo 'MACHINE_READABLE_COMPANION=PASS'
-          echo 'LLM_READER_PUBLIC_RETRIEVAL=PASS'
-          echo "PUBLIC_POC_URL=$HOME_URL"
-          echo "PINNED_PUBLIC_POC_URL=$PINNED_URL"
-          echo "LLM_READER_URL=$JINA_URL"
-          echo "POC_CONTENT_COMMIT=$POC_COMMIT"
+      - run: echo 'Manual gate paused while public dossier is being upgraded.'
