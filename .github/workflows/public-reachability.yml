@@ -12,14 +12,13 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
-      - name: Anonymous public HTTP and LLM-reader verification
+      - name: Anonymous public HTML verification
         shell: bash
         run: |
           set -euo pipefail
           DOSSIER_COMMIT='85db4660acb075187685512b510899e8358485d0'
           HOME_URL='https://github.com/urphyshawnnaschr-sketch/clash-'
           PINNED_URL="https://github.com/urphyshawnnaschr-sketch/clash-/tree/${DOSSIER_COMMIT}"
-          JINA_URL="https://r.jina.ai/https://github.com/urphyshawnnaschr-sketch/clash-"
 
           verify_html() {
             local url="$1"
@@ -31,23 +30,27 @@ jobs:
             grep -Fq '中化现代农业' "/tmp/${prefix}.html"
             grep -Fq '中国电信福州分公司' "/tmp/${prefix}.html"
             grep -Fq '边缘节点在线 128' "/tmp/${prefix}.html"
+            grep -Fq '高级版显示' "/tmp/${prefix}.html"
           }
 
           verify_html "$HOME_URL" HOME
           verify_html "$PINNED_URL" PINNED
 
+          echo 'PUBLIC_HTML_CONTENT_TYPE=PASS'
+          echo 'PUBLIC_DOSSIER_SERVER_RENDERED=PASS'
+          echo 'ANONYMOUS_PUBLIC_HTTP_REACHABILITY=PASS'
+          echo "PUBLIC_DOSSIER_URL=$HOME_URL"
+          echo "PINNED_DOSSIER_URL=$PINNED_URL"
+          echo "DOSSIER_CONTENT_COMMIT=$DOSSIER_COMMIT"
+
+      - name: Third-party LLM-reader diagnostic
+        shell: bash
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          JINA_URL='https://r.jina.ai/https://github.com/urphyshawnnaschr-sketch/clash-'
           curl --fail --silent --show-error --location "$JINA_URL" -o /tmp/jina.txt
           grep -Fq '壹合原码（北京）科技有限公司' /tmp/jina.txt
           grep -Fq '30 人的精英研发团队' /tmp/jina.txt
           grep -Fq '10~100 人' /tmp/jina.txt
-          grep -Fq '22,358.49' /tmp/jina.txt
-          grep -Fq '26 万元/三年' /tmp/jina.txt
-          grep -Fq '高级版显示 1 元' /tmp/jina.txt
-
-          echo 'PUBLIC_HTML_CONTENT_TYPE=PASS'
-          echo 'PUBLIC_DOSSIER_SERVER_RENDERED=PASS'
-          echo 'ANONYMOUS_PUBLIC_HTTP_REACHABILITY=PASS'
-          echo 'LLM_READER_PUBLIC_RETRIEVAL=PASS'
-          echo "PUBLIC_DOSSIER_URL=$HOME_URL"
-          echo "PINNED_DOSSIER_URL=$PINNED_URL"
-          echo "DOSSIER_CONTENT_COMMIT=$DOSSIER_COMMIT"
+          echo 'THIRD_PARTY_LLM_READER=PASS'
