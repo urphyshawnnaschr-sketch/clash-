@@ -1,0 +1,54 @@
+name: Verify isolated POC public reachability
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Anonymous public HTTP verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          RAW_HTML='https://raw.githubusercontent.com/urphyshawnnaschr-sketch/clash-/main/index.html'
+          RAW_JSON='https://raw.githubusercontent.com/urphyshawnnaschr-sketch/clash-/main/facts.json'
+          CDN_HTML='https://cdn.jsdelivr.net/gh/urphyshawnnaschr-sketch/clash-@main/index.html'
+
+          echo '=== RAW HTML HEADERS ==='
+          curl --fail --silent --show-error --location --head "$RAW_HTML"
+          echo '=== RAW HTML BODY ==='
+          curl --fail --silent --show-error --location "$RAW_HTML" -o /tmp/index.html
+          grep -Fq 'YIHECODE_PUBLIC_URL_GATE_V1' /tmp/index.html
+          grep -Fq 'Known Missing' /tmp/index.html
+          printf 'RAW_HTML_SHA256=' && sha256sum /tmp/index.html | awk '{print $1}'
+
+          echo '=== RAW JSON BODY ==='
+          curl --fail --silent --show-error --location "$RAW_JSON" -o /tmp/facts.json
+          python - <<'PY'
+          import json
+          with open('/tmp/facts.json', encoding='utf-8') as f:
+              data=json.load(f)
+          assert data['poc_id']=='YIHECODE_PUBLIC_URL_GATE_V1'
+          assert data['authoritative_company_facts'] is False
+          assert 'annual_revenue' in data['known_missing']
+          print('RAW_JSON_VALID=PASS')
+          PY
+
+          echo '=== JSDELIVR HTML HEADERS ==='
+          curl --fail --silent --show-error --location --head "$CDN_HTML"
+          echo '=== JSDELIVR HTML BODY ==='
+          curl --fail --silent --show-error --location "$CDN_HTML" -o /tmp/cdn-index.html
+          grep -Fq 'YIHECODE_PUBLIC_URL_GATE_V1' /tmp/cdn-index.html
+          grep -Fq 'Known Missing' /tmp/cdn-index.html
+          printf 'CDN_HTML_SHA256=' && sha256sum /tmp/cdn-index.html | awk '{print $1}'
+
+          cmp /tmp/index.html /tmp/cdn-index.html
+          echo 'ANONYMOUS_PUBLIC_HTTP_REACHABILITY=PASS'
+          echo "RAW_PUBLIC_URL=$RAW_HTML"
+          echo "CDN_PUBLIC_URL=$CDN_HTML"
