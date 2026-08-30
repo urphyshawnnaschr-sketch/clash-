@@ -1,8 +1,8 @@
 name: Deploy isolated AI URL gate POC to GitHub Pages
 
+# Manual-only because automatic Pages enablement was attempted on 2026-08-29
+# and GitHub returned: Resource not accessible by integration.
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
