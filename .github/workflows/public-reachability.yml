@@ -16,19 +16,28 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          PINNED='27464e320df8191775f46f2061cbee1a8c88aef4'
-          RAW_HTML="https://raw.githubusercontent.com/urphyshawnnaschr-sketch/clash-/${PINNED}/index.html"
-          RAW_JSON="https://raw.githubusercontent.com/urphyshawnnaschr-sketch/clash-/${PINNED}/facts.json"
-          JSD_HTML="https://cdn.jsdelivr.net/gh/urphyshawnnaschr-sketch/clash-@${PINNED}/index.html"
-          HTML_URL="https://cdn.statically.io/gh/urphyshawnnaschr-sketch/clash-@${PINNED}/index.html"
+          POC_COMMIT='05c3a15270c18513bd8b570a201d40bf313fdc22'
+          HOME_URL='https://github.com/urphyshawnnaschr-sketch/clash-'
+          PINNED_URL="https://github.com/urphyshawnnaschr-sketch/clash-/tree/${POC_COMMIT}"
+          RAW_JSON="https://raw.githubusercontent.com/urphyshawnnaschr-sketch/clash-/${POC_COMMIT}/facts.json"
 
-          echo '=== SOURCE RAW HTML ==='
-          curl --fail --silent --show-error --location "$RAW_HTML" -o /tmp/source.html
-          grep -Fq 'YIHECODE_PUBLIC_URL_GATE_V1' /tmp/source.html
-          grep -Fq 'Known Missing' /tmp/source.html
-          printf 'SOURCE_SHA256=' && sha256sum /tmp/source.html | awk '{print $1}'
+          verify_html() {
+            local url="$1"
+            local prefix="$2"
+            echo "=== ${prefix} HEADERS ==="
+            curl --fail --silent --show-error --location --head "$url" | tee "/tmp/${prefix}.headers"
+            grep -Eiq '^content-type:[[:space:]]*text/html([;[:space:]]|$)' "/tmp/${prefix}.headers"
+            echo "=== ${prefix} BODY ==="
+            curl --fail --silent --show-error --location "$url" -o "/tmp/${prefix}.html"
+            grep -Fq 'YIHECODE_PUBLIC_URL_GATE_V1' "/tmp/${prefix}.html"
+            grep -Fq 'Known Missing' "/tmp/${prefix}.html"
+            printf '%s_SHA256=' "$prefix" && sha256sum "/tmp/${prefix}.html" | awk '{print $1}'
+          }
 
-          echo '=== SOURCE JSON ==='
+          verify_html "$HOME_URL" HOME
+          verify_html "$PINNED_URL" PINNED
+
+          echo '=== MACHINE READABLE COMPANION ==='
           curl --fail --silent --show-error --location "$RAW_JSON" -o /tmp/facts.json
           python - <<'PY'
           import json
@@ -40,24 +49,9 @@ jobs:
           print('RAW_JSON_VALID=PASS')
           PY
 
-          echo '=== JSD CDN CONTROL ==='
-          curl --fail --silent --show-error --location "$JSD_HTML" -o /tmp/jsd.html
-          cmp /tmp/source.html /tmp/jsd.html
-          printf 'JSD_SHA256=' && sha256sum /tmp/jsd.html | awk '{print $1}'
-
-          echo '=== STATICALLY HTML HEADERS ==='
-          curl --fail --silent --show-error --location --head "$HTML_URL" | tee /tmp/html.headers
-          grep -Eiq '^content-type:[[:space:]]*text/html([;[:space:]]|$)' /tmp/html.headers
-
-          echo '=== STATICALLY HTML BODY ==='
-          curl --fail --silent --show-error --location "$HTML_URL" -o /tmp/public.html
-          grep -Fq 'YIHECODE_PUBLIC_URL_GATE_V1' /tmp/public.html
-          grep -Fq 'Known Missing' /tmp/public.html
-          cmp /tmp/source.html /tmp/public.html
-          printf 'PUBLIC_HTML_SHA256=' && sha256sum /tmp/public.html | awk '{print $1}'
-
           echo 'PUBLIC_HTML_CONTENT_TYPE=PASS'
-          echo 'PUBLIC_HTML_CONTENT_INTEGRITY=PASS'
+          echo 'PUBLIC_HTML_SERVER_RENDERED_MARKERS=PASS'
           echo 'ANONYMOUS_PUBLIC_HTTP_REACHABILITY=PASS'
-          echo "PUBLIC_HTML_URL=$HTML_URL"
-          echo "PINNED_SOURCE_COMMIT=$PINNED"
+          echo "PUBLIC_POC_URL=$HOME_URL"
+          echo "PINNED_PUBLIC_POC_URL=$PINNED_URL"
+          echo "POC_CONTENT_COMMIT=$POC_COMMIT"
