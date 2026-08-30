@@ -12,7 +12,7 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
-      - name: Anonymous public HTTP verification
+      - name: Anonymous public HTTP and AI-reader verification
         shell: bash
         run: |
           set -euo pipefail
@@ -20,6 +20,7 @@ jobs:
           HOME_URL='https://github.com/urphyshawnnaschr-sketch/clash-'
           PINNED_URL="https://github.com/urphyshawnnaschr-sketch/clash-/tree/${POC_COMMIT}"
           RAW_JSON="https://raw.githubusercontent.com/urphyshawnnaschr-sketch/clash-/${POC_COMMIT}/facts.json"
+          JINA_URL="https://r.jina.ai/https://github.com/urphyshawnnaschr-sketch/clash-"
 
           verify_html() {
             local url="$1"
@@ -31,7 +32,6 @@ jobs:
             curl --fail --silent --show-error --location "$url" -o "/tmp/${prefix}.html"
             grep -Fq 'YIHECODE_PUBLIC_URL_GATE_V1' "/tmp/${prefix}.html"
             grep -Fq 'Known Missing' "/tmp/${prefix}.html"
-            printf '%s_SHA256=' "$prefix" && sha256sum "/tmp/${prefix}.html" | awk '{print $1}'
           }
 
           verify_html "$HOME_URL" HOME
@@ -49,9 +49,19 @@ jobs:
           print('RAW_JSON_VALID=PASS')
           PY
 
+          echo '=== LLM-ORIENTED READER ==='
+          curl --fail --silent --show-error --location "$JINA_URL" -o /tmp/jina.txt
+          grep -Fq 'YIHECODE_PUBLIC_URL_GATE_V1' /tmp/jina.txt
+          grep -Fq 'Known Missing' /tmp/jina.txt
+          grep -Fq 'Annual revenue' /tmp/jina.txt
+          echo 'LLM_READER_PUBLIC_RETRIEVAL=PASS'
+
           echo 'PUBLIC_HTML_CONTENT_TYPE=PASS'
           echo 'PUBLIC_HTML_SERVER_RENDERED_MARKERS=PASS'
           echo 'ANONYMOUS_PUBLIC_HTTP_REACHABILITY=PASS'
+          echo 'MACHINE_READABLE_COMPANION=PASS'
+          echo 'LLM_READER_PUBLIC_RETRIEVAL=PASS'
           echo "PUBLIC_POC_URL=$HOME_URL"
           echo "PINNED_PUBLIC_POC_URL=$PINNED_URL"
+          echo "LLM_READER_URL=$JINA_URL"
           echo "POC_CONTENT_COMMIT=$POC_COMMIT"
