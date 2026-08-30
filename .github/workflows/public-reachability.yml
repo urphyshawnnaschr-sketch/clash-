@@ -20,7 +20,7 @@ jobs:
           RAW_HTML="https://raw.githubusercontent.com/urphyshawnnaschr-sketch/clash-/${PINNED}/index.html"
           RAW_JSON="https://raw.githubusercontent.com/urphyshawnnaschr-sketch/clash-/${PINNED}/facts.json"
           JSD_HTML="https://cdn.jsdelivr.net/gh/urphyshawnnaschr-sketch/clash-@${PINNED}/index.html"
-          HTML_URL="https://rawcdn.githack.com/urphyshawnnaschr-sketch/clash-/${PINNED}/index.html"
+          HTML_URL="https://cdn.statically.io/gh/urphyshawnnaschr-sketch/clash-@${PINNED}/index.html"
 
           echo '=== SOURCE RAW HTML ==='
           curl --fail --silent --show-error --location "$RAW_HTML" -o /tmp/source.html
@@ -45,16 +45,16 @@ jobs:
           cmp /tmp/source.html /tmp/jsd.html
           printf 'JSD_SHA256=' && sha256sum /tmp/jsd.html | awk '{print $1}'
 
-          echo '=== GITHACK PRODUCTION HTML HEADERS ==='
-          curl --fail --silent --show-error --location --head "$HTML_URL" | tee /tmp/githack.headers
-          grep -Eiq '^content-type:[[:space:]]*text/html([;[:space:]]|$)' /tmp/githack.headers
+          echo '=== STATICALLY HTML HEADERS ==='
+          curl --fail --silent --show-error --location --head "$HTML_URL" | tee /tmp/html.headers
+          grep -Eiq '^content-type:[[:space:]]*text/html([;[:space:]]|$)' /tmp/html.headers
 
-          echo '=== GITHACK PRODUCTION HTML BODY ==='
-          curl --fail --silent --show-error --location "$HTML_URL" -o /tmp/githack.html
-          grep -Fq 'YIHECODE_PUBLIC_URL_GATE_V1' /tmp/githack.html
-          grep -Fq 'Known Missing' /tmp/githack.html
-          cmp /tmp/source.html /tmp/githack.html
-          printf 'GITHACK_SHA256=' && sha256sum /tmp/githack.html | awk '{print $1}'
+          echo '=== STATICALLY HTML BODY ==='
+          curl --fail --silent --show-error --location "$HTML_URL" -o /tmp/public.html
+          grep -Fq 'YIHECODE_PUBLIC_URL_GATE_V1' /tmp/public.html
+          grep -Fq 'Known Missing' /tmp/public.html
+          cmp /tmp/source.html /tmp/public.html
+          printf 'PUBLIC_HTML_SHA256=' && sha256sum /tmp/public.html | awk '{print $1}'
 
           echo 'PUBLIC_HTML_CONTENT_TYPE=PASS'
           echo 'PUBLIC_HTML_CONTENT_INTEGRITY=PASS'
