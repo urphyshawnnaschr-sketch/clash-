@@ -16,19 +16,19 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          RAW_HTML='https://raw.githubusercontent.com/urphyshawnnaschr-sketch/clash-/main/index.html'
-          RAW_JSON='https://raw.githubusercontent.com/urphyshawnnaschr-sketch/clash-/main/facts.json'
-          CDN_HTML='https://cdn.jsdelivr.net/gh/urphyshawnnaschr-sketch/clash-@main/index.html'
+          PINNED='27464e320df8191775f46f2061cbee1a8c88aef4'
+          RAW_HTML="https://raw.githubusercontent.com/urphyshawnnaschr-sketch/clash-/${PINNED}/index.html"
+          RAW_JSON="https://raw.githubusercontent.com/urphyshawnnaschr-sketch/clash-/${PINNED}/facts.json"
+          JSD_HTML="https://cdn.jsdelivr.net/gh/urphyshawnnaschr-sketch/clash-@${PINNED}/index.html"
+          HTML_URL="https://rawcdn.githack.com/urphyshawnnaschr-sketch/clash-/${PINNED}/index.html"
 
-          echo '=== RAW HTML HEADERS ==='
-          curl --fail --silent --show-error --location --head "$RAW_HTML"
-          echo '=== RAW HTML BODY ==='
-          curl --fail --silent --show-error --location "$RAW_HTML" -o /tmp/index.html
-          grep -Fq 'YIHECODE_PUBLIC_URL_GATE_V1' /tmp/index.html
-          grep -Fq 'Known Missing' /tmp/index.html
-          printf 'RAW_HTML_SHA256=' && sha256sum /tmp/index.html | awk '{print $1}'
+          echo '=== SOURCE RAW HTML ==='
+          curl --fail --silent --show-error --location "$RAW_HTML" -o /tmp/source.html
+          grep -Fq 'YIHECODE_PUBLIC_URL_GATE_V1' /tmp/source.html
+          grep -Fq 'Known Missing' /tmp/source.html
+          printf 'SOURCE_SHA256=' && sha256sum /tmp/source.html | awk '{print $1}'
 
-          echo '=== RAW JSON BODY ==='
+          echo '=== SOURCE JSON ==='
           curl --fail --silent --show-error --location "$RAW_JSON" -o /tmp/facts.json
           python - <<'PY'
           import json
@@ -40,15 +40,24 @@ jobs:
           print('RAW_JSON_VALID=PASS')
           PY
 
-          echo '=== JSDELIVR HTML HEADERS ==='
-          curl --fail --silent --show-error --location --head "$CDN_HTML"
-          echo '=== JSDELIVR HTML BODY ==='
-          curl --fail --silent --show-error --location "$CDN_HTML" -o /tmp/cdn-index.html
-          grep -Fq 'YIHECODE_PUBLIC_URL_GATE_V1' /tmp/cdn-index.html
-          grep -Fq 'Known Missing' /tmp/cdn-index.html
-          printf 'CDN_HTML_SHA256=' && sha256sum /tmp/cdn-index.html | awk '{print $1}'
+          echo '=== JSD CDN CONTROL ==='
+          curl --fail --silent --show-error --location "$JSD_HTML" -o /tmp/jsd.html
+          cmp /tmp/source.html /tmp/jsd.html
+          printf 'JSD_SHA256=' && sha256sum /tmp/jsd.html | awk '{print $1}'
 
-          cmp /tmp/index.html /tmp/cdn-index.html
+          echo '=== GITHACK PRODUCTION HTML HEADERS ==='
+          curl --fail --silent --show-error --location --head "$HTML_URL" | tee /tmp/githack.headers
+          grep -Eiq '^content-type:[[:space:]]*text/html([;[:space:]]|$)' /tmp/githack.headers
+
+          echo '=== GITHACK PRODUCTION HTML BODY ==='
+          curl --fail --silent --show-error --location "$HTML_URL" -o /tmp/githack.html
+          grep -Fq 'YIHECODE_PUBLIC_URL_GATE_V1' /tmp/githack.html
+          grep -Fq 'Known Missing' /tmp/githack.html
+          cmp /tmp/source.html /tmp/githack.html
+          printf 'GITHACK_SHA256=' && sha256sum /tmp/githack.html | awk '{print $1}'
+
+          echo 'PUBLIC_HTML_CONTENT_TYPE=PASS'
+          echo 'PUBLIC_HTML_CONTENT_INTEGRITY=PASS'
           echo 'ANONYMOUS_PUBLIC_HTTP_REACHABILITY=PASS'
-          echo "RAW_PUBLIC_URL=$RAW_HTML"
-          echo "CDN_PUBLIC_URL=$CDN_HTML"
+          echo "PUBLIC_HTML_URL=$HTML_URL"
+          echo "PINNED_SOURCE_COMMIT=$PINNED"
