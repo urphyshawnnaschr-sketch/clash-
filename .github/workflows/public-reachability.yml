@@ -1,4 +1,4 @@
-name: Verify frozen second-round facts snapshot
+name: Verify isolated second-round root snapshot
 
 on:
   push:
@@ -12,17 +12,18 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
-      - name: Verify frozen snapshot and anonymous reachability
+      - name: Verify isolated frozen snapshot and anonymous reachability
         shell: bash
         run: |
           set -euo pipefail
           FIRST_ROUND_COMMIT='85db4660acb075187685512b510899e8358485d0'
-          SECOND_ROUND_COMMIT='bbd37290f5f24768ef71eb62be019d336d01f272'
+          SECOND_ROUND_COMMIT='e9a0eb7c89a79f4379433ab9a9dd86be0c5d10ce'
 
           HOME_URL='https://github.com/urphyshawnnaschr-sketch/clash-'
           FIRST_ROUND_URL="https://github.com/urphyshawnnaschr-sketch/clash-/tree/${FIRST_ROUND_COMMIT}"
-          FACTS_URL="https://github.com/urphyshawnnaschr-sketch/clash-/blob/${SECOND_ROUND_COMMIT}/company-facts/README.md"
-          FACTS_JSON_URL="https://raw.githubusercontent.com/urphyshawnnaschr-sketch/clash-/${SECOND_ROUND_COMMIT}/company-facts/facts.json"
+          FACTS_URL="https://github.com/urphyshawnnaschr-sketch/clash-/tree/${SECOND_ROUND_COMMIT}"
+          FACTS_JSON_URL="https://raw.githubusercontent.com/urphyshawnnaschr-sketch/clash-/${SECOND_ROUND_COMMIT}/facts.json"
+          TREE_API_URL="https://api.github.com/repos/urphyshawnnaschr-sketch/clash-/git/trees/${SECOND_ROUND_COMMIT}"
 
           verify_html() {
             local url="$1"
@@ -60,20 +61,29 @@ jobs:
           grep -Fq 'rating.baidu_5' /tmp/facts.json
           grep -Fq 'current_2026_status_requires_certificate_or_live_registry' /tmp/facts.json
 
-          echo 'FROZEN_SECOND_ROUND_HTML=PASS'
-          echo 'FROZEN_SECOND_ROUND_JSON_PUBLIC=PASS'
-          echo 'FROZEN_SECOND_ROUND_JSON_VALID=PASS'
+          curl --fail --silent --show-error --location "$TREE_API_URL" -o /tmp/tree.json
+          python - <<'PY'
+          import json
+          t=json.load(open('/tmp/tree.json', encoding='utf-8'))['tree']
+          paths=sorted(x['path'] for x in t)
+          assert paths == ['README.md','facts.json'], paths
+          print('ISOLATED_TREE_EXACT_TWO_FILES=PASS')
+          PY
+
+          echo 'ISOLATED_SECOND_ROUND_HTML=PASS'
+          echo 'ISOLATED_SECOND_ROUND_JSON_PUBLIC=PASS'
+          echo 'ISOLATED_SECOND_ROUND_JSON_VALID=PASS'
           echo 'ANONYMOUS_PUBLIC_HTTP_REACHABILITY=PASS'
           echo "SECOND_ROUND_FACTS_URL=$FACTS_URL"
           echo "SECOND_ROUND_JSON_URL=$FACTS_JSON_URL"
           echo "SECOND_ROUND_CONTENT_COMMIT=$SECOND_ROUND_COMMIT"
 
-      - name: Third-party LLM-reader diagnostic on frozen snapshot
+      - name: Third-party LLM-reader diagnostic on isolated frozen snapshot
         shell: bash
         run: |
           set -euo pipefail
-          SECOND_ROUND_COMMIT='bbd37290f5f24768ef71eb62be019d336d01f272'
-          FACTS_JINA="https://r.jina.ai/https://github.com/urphyshawnnaschr-sketch/clash-/blob/${SECOND_ROUND_COMMIT}/company-facts/README.md"
+          SECOND_ROUND_COMMIT='e9a0eb7c89a79f4379433ab9a9dd86be0c5d10ce'
+          FACTS_JINA="https://r.jina.ai/https://github.com/urphyshawnnaschr-sketch/clash-/tree/${SECOND_ROUND_COMMIT}"
 
           curl --fail --silent --show-error --location "$FACTS_JINA" -o /tmp/jina-facts.txt
           grep -Fq '企业公开事实与证据' /tmp/jina-facts.txt
@@ -84,4 +94,4 @@ jobs:
           grep -Fq '网页不存在' /tmp/jina-facts.txt
           grep -Fq '机械计为多份独立证据' /tmp/jina-facts.txt
 
-          echo 'THIRD_PARTY_LLM_READER_FROZEN_FACTS=PASS'
+          echo 'THIRD_PARTY_LLM_READER_ISOLATED_FACTS=PASS'
