@@ -20,6 +20,8 @@ jobs:
           HOME_URL='https://github.com/urphyshawnnaschr-sketch/clash-'
           PINNED_URL="https://github.com/urphyshawnnaschr-sketch/clash-/tree/${DOSSIER_COMMIT}"
           POC_B_URL='https://github.com/urphyshawnnaschr-sketch/clash-/blob/main/poc-b/README.md'
+          FACTS_URL='https://github.com/urphyshawnnaschr-sketch/clash-/blob/main/company-facts/README.md'
+          FACTS_JSON_URL='https://raw.githubusercontent.com/urphyshawnnaschr-sketch/clash-/main/company-facts/facts.json'
 
           verify_html() {
             local url="$1"
@@ -38,17 +40,32 @@ jobs:
 
           verify_html "$POC_B_URL" POC_B
           grep -Fq 'AI 事实、历史记录与第三方信息解释 POC' /tmp/POC_B.html
-          grep -Fq '你可以继续搜索任何公开互联网来源' /tmp/POC_B.html
-          grep -Fq '中化现代农业' /tmp/POC_B.html
-          grep -Fq '无人机高级版 1 元' /tmp/POC_B.html
-          grep -Fq '中国电信福州项目' /tmp/POC_B.html
+
+          verify_html "$FACTS_URL" FACTS
+          grep -Fq '企业公开事实与证据' /tmp/FACTS.html
+          grep -Fq '注册资本 1000 万' /tmp/FACTS.html
+          grep -Fq '无人机高级版 1 元' /tmp/FACTS.html
+          grep -Fq '累计评价' /tmp/FACTS.html
+          grep -Fq '张旭公开履历' /tmp/FACTS.html
+          grep -Fq '历史 OCR / 技术宣传' /tmp/FACTS.html
+          grep -Fq '网页打不开，不等于网页不存在' /tmp/FACTS.html
+          grep -Fq '转载不算多份独立证据' /tmp/FACTS.html
+
+          curl --fail --silent --show-error --location "$FACTS_JSON_URL" -o /tmp/facts.json
+          grep -Fq 'tool_access_failure_is_not_nonexistence' /tmp/facts.json
+          grep -Fq 'pricing.drone_1yuan' /tmp/facts.json
+          grep -Fq 'rating.baidu_5' /tmp/facts.json
+          grep -Fq 'historical.ocr_claims' /tmp/facts.json
 
           echo 'PUBLIC_HTML_CONTENT_TYPE=PASS'
           echo 'PUBLIC_DOSSIER_SERVER_RENDERED=PASS'
           echo 'POC_B_SERVER_RENDERED=PASS'
+          echo 'NEUTRAL_FACTS_SERVER_RENDERED=PASS'
+          echo 'NEUTRAL_FACTS_JSON_PUBLIC=PASS'
           echo 'ANONYMOUS_PUBLIC_HTTP_REACHABILITY=PASS'
           echo "PUBLIC_DOSSIER_URL=$HOME_URL"
-          echo "POC_B_URL=$POC_B_URL"
+          echo "NEUTRAL_FACTS_URL=$FACTS_URL"
+          echo "NEUTRAL_FACTS_JSON_URL=$FACTS_JSON_URL"
           echo "PINNED_DOSSIER_URL=$PINNED_URL"
           echo "DOSSIER_CONTENT_COMMIT=$DOSSIER_COMMIT"
 
@@ -59,15 +76,22 @@ jobs:
           set -euo pipefail
           HOME_JINA='https://r.jina.ai/https://github.com/urphyshawnnaschr-sketch/clash-'
           POC_B_JINA='https://r.jina.ai/https://github.com/urphyshawnnaschr-sketch/clash-/blob/main/poc-b/README.md'
+          FACTS_JINA='https://r.jina.ai/https://github.com/urphyshawnnaschr-sketch/clash-/blob/main/company-facts/README.md'
 
           curl --fail --silent --show-error --location "$HOME_JINA" -o /tmp/jina-home.txt
           grep -Fq '壹合原码（北京）科技有限公司' /tmp/jina-home.txt
 
           curl --fail --silent --show-error --location "$POC_B_JINA" -o /tmp/jina-poc-b.txt
           grep -Fq 'AI 事实、历史记录与第三方信息解释 POC' /tmp/jina-poc-b.txt
-          grep -Fq '你可以继续搜索任何公开互联网来源' /tmp/jina-poc-b.txt
-          grep -Fq '中化现代农业' /tmp/jina-poc-b.txt
-          grep -Fq '无人机高级版 1 元' /tmp/jina-poc-b.txt
+
+          curl --fail --silent --show-error --location "$FACTS_JINA" -o /tmp/jina-facts.txt
+          grep -Fq '企业公开事实与证据' /tmp/jina-facts.txt
+          grep -Fq '注册资本 1000 万' /tmp/jina-facts.txt
+          grep -Fq '无人机高级版 1 元' /tmp/jina-facts.txt
+          grep -Fq '累计评价' /tmp/jina-facts.txt
+          grep -Fq '网页打不开，不等于网页不存在' /tmp/jina-facts.txt
+          grep -Fq '转载不算多份独立证据' /tmp/jina-facts.txt
 
           echo 'THIRD_PARTY_LLM_READER_HOME=PASS'
           echo 'THIRD_PARTY_LLM_READER_POC_B=PASS'
+          echo 'THIRD_PARTY_LLM_READER_NEUTRAL_FACTS=PASS'
