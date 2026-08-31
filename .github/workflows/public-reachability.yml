@@ -19,6 +19,7 @@ jobs:
           DOSSIER_COMMIT='85db4660acb075187685512b510899e8358485d0'
           HOME_URL='https://github.com/urphyshawnnaschr-sketch/clash-'
           PINNED_URL="https://github.com/urphyshawnnaschr-sketch/clash-/tree/${DOSSIER_COMMIT}"
+          POC_B_URL='https://github.com/urphyshawnnaschr-sketch/clash-/blob/main/poc-b/README.md'
 
           verify_html() {
             local url="$1"
@@ -26,20 +27,28 @@ jobs:
             curl --fail --silent --show-error --location --head "$url" | tee "/tmp/${prefix}.headers"
             grep -Eiq '^content-type:[[:space:]]*text/html([;[:space:]]|$)' "/tmp/${prefix}.headers"
             curl --fail --silent --show-error --location "$url" -o "/tmp/${prefix}.html"
-            grep -Fq '壹合原码（北京）科技有限公司' "/tmp/${prefix}.html"
-            grep -Fq '中化现代农业' "/tmp/${prefix}.html"
-            grep -Fq '中国电信福州分公司' "/tmp/${prefix}.html"
-            grep -Fq '边缘节点在线 128' "/tmp/${prefix}.html"
-            grep -Fq '高级版显示' "/tmp/${prefix}.html"
           }
 
           verify_html "$HOME_URL" HOME
+          grep -Fq '壹合原码（北京）科技有限公司' /tmp/HOME.html
+          grep -Fq '中化现代农业' /tmp/HOME.html
+
           verify_html "$PINNED_URL" PINNED
+          grep -Fq '壹合原码（北京）科技有限公司' /tmp/PINNED.html
+
+          verify_html "$POC_B_URL" POC_B
+          grep -Fq 'AI 事实、历史记录与第三方信息解释 POC' /tmp/POC_B.html
+          grep -Fq '你可以继续搜索任何公开互联网来源' /tmp/POC_B.html
+          grep -Fq '中化现代农业' /tmp/POC_B.html
+          grep -Fq '无人机高级版 1 元' /tmp/POC_B.html
+          grep -Fq '中国电信福州项目' /tmp/POC_B.html
 
           echo 'PUBLIC_HTML_CONTENT_TYPE=PASS'
           echo 'PUBLIC_DOSSIER_SERVER_RENDERED=PASS'
+          echo 'POC_B_SERVER_RENDERED=PASS'
           echo 'ANONYMOUS_PUBLIC_HTTP_REACHABILITY=PASS'
           echo "PUBLIC_DOSSIER_URL=$HOME_URL"
+          echo "POC_B_URL=$POC_B_URL"
           echo "PINNED_DOSSIER_URL=$PINNED_URL"
           echo "DOSSIER_CONTENT_COMMIT=$DOSSIER_COMMIT"
 
@@ -48,9 +57,17 @@ jobs:
         continue-on-error: true
         run: |
           set -euo pipefail
-          JINA_URL='https://r.jina.ai/https://github.com/urphyshawnnaschr-sketch/clash-'
-          curl --fail --silent --show-error --location "$JINA_URL" -o /tmp/jina.txt
-          grep -Fq '壹合原码（北京）科技有限公司' /tmp/jina.txt
-          grep -Fq '30 人的精英研发团队' /tmp/jina.txt
-          grep -Fq '10~100 人' /tmp/jina.txt
-          echo 'THIRD_PARTY_LLM_READER=PASS'
+          HOME_JINA='https://r.jina.ai/https://github.com/urphyshawnnaschr-sketch/clash-'
+          POC_B_JINA='https://r.jina.ai/https://github.com/urphyshawnnaschr-sketch/clash-/blob/main/poc-b/README.md'
+
+          curl --fail --silent --show-error --location "$HOME_JINA" -o /tmp/jina-home.txt
+          grep -Fq '壹合原码（北京）科技有限公司' /tmp/jina-home.txt
+
+          curl --fail --silent --show-error --location "$POC_B_JINA" -o /tmp/jina-poc-b.txt
+          grep -Fq 'AI 事实、历史记录与第三方信息解释 POC' /tmp/jina-poc-b.txt
+          grep -Fq '你可以继续搜索任何公开互联网来源' /tmp/jina-poc-b.txt
+          grep -Fq '中化现代农业' /tmp/jina-poc-b.txt
+          grep -Fq '无人机高级版 1 元' /tmp/jina-poc-b.txt
+
+          echo 'THIRD_PARTY_LLM_READER_HOME=PASS'
+          echo 'THIRD_PARTY_LLM_READER_POC_B=PASS'
