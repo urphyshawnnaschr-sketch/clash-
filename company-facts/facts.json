@@ -1,0 +1,222 @@
+{
+  "entity": "壹合原码（北京）科技有限公司",
+  "last_verified": "2026-08-31",
+  "principles": {
+    "external_search_allowed": true,
+    "company_confirmed_is_not_independently_verified": true,
+    "not_publicly_verified_is_not_false": true,
+    "tool_access_failure_is_not_nonexistence": true,
+    "search_snippet_is_not_primary_evidence": true,
+    "copied_reposts_are_not_independent_sources": true
+  },
+  "claims": [
+    {
+      "id": "identity.legal_name",
+      "type": "current_legal_fact",
+      "statement": "壹合原码（北京）科技有限公司",
+      "status": "verified_public_record"
+    },
+    {
+      "id": "identity.established",
+      "type": "historical_event",
+      "statement": "成立日期为2015-12-03",
+      "status": "verified_public_record"
+    },
+    {
+      "id": "capital.registered",
+      "type": "registered_field",
+      "statement": "注册资本1000万元",
+      "status": "verified_public_record",
+      "does_not_imply": [
+        "annual_revenue_1000w",
+        "valuation_1000w",
+        "paid_in_capital_1000w",
+        "project_capacity_1000w",
+        "cash_balance_1000w"
+      ]
+    },
+    {
+      "id": "address.registered.miyun",
+      "type": "registered_address",
+      "statement": "北京市密云区鼓楼东大街3号山水大厦3层313室-4541（集群注册）",
+      "role": "legal_registered_address",
+      "status": "verified_public_record"
+    },
+    {
+      "id": "address.chaoyang",
+      "type": "current_company_statement_plus_third_party_history",
+      "statement": "北京朝阳区东三环中路9号富尔大厦5层；2024中化采购文件写富尔大厦503",
+      "role": "current_site_project_contact_address_and_2024_supplier_address",
+      "status": "current_actual_office_pending_company_confirmation"
+    },
+    {
+      "id": "address.haidian",
+      "type": "external_platform_record",
+      "statement": "百度AI市场显示北京市海淀区北清路68号院24号楼D座4层732",
+      "role": "historical_or_platform_address_candidate",
+      "status": "usage_period_unknown"
+    },
+    {
+      "id": "headcount.rnd30",
+      "type": "company_claim",
+      "statement": "当前官网称30人精英研发团队",
+      "status": "current_company_claim_pending_confirmation"
+    },
+    {
+      "id": "headcount.baidu_range",
+      "type": "external_platform_record",
+      "statement": "百度AI市场显示企业规模10~100人",
+      "status": "verified_page_display",
+      "note": "不等同精确员工数"
+    },
+    {
+      "id": "headcount.insurance_semantics",
+      "type": "interpretation_rule",
+      "statement": "参保人数、总员工数、研发团队人数不是天然等价字段",
+      "status": "semantic_rule"
+    },
+    {
+      "id": "business.current",
+      "type": "company_current_statement",
+      "statement": "当前官网聚焦企业级AI视觉与视频智能分析",
+      "status": "verified_company_statement"
+    },
+    {
+      "id": "business.historical_ocr_rpa",
+      "type": "historical_external_records",
+      "statement": "百度AI市场及历史第三方页面仍保留OCR、RPA等较早业务信息",
+      "status": "verified_historical_public_records"
+    },
+    {
+      "id": "models.80plus",
+      "type": "historical_claim",
+      "statement": "旧官网曾称积累80+ AI模型",
+      "status": "historical_claim_pending_scope_confirmation",
+      "does_not_imply": [
+        "2026_current_sku_count",
+        "2026_current_maintained_model_count",
+        "2026_immediately_deliverable_model_count"
+      ]
+    },
+    {
+      "id": "homepage.metrics",
+      "type": "page_display",
+      "statement": "当前官网展示128节点、2486事件、99.2%、16ms、98%、91%等数字",
+      "status": "page_display_verified_meaning_unknown",
+      "does_not_imply": [
+        "company_sla",
+        "all_customer_average_kpi",
+        "overall_algorithm_accuracy",
+        "universal_hardware_benchmark"
+      ]
+    },
+    {
+      "id": "pricing.baidu_listing",
+      "type": "external_market_listing",
+      "statement": "百度AI市场显示多项挂牌价格",
+      "status": "listing_price_verified",
+      "does_not_imply": [
+        "actual_transaction_price",
+        "average_order_value",
+        "revenue",
+        "typical_contract_value"
+      ]
+    },
+    {
+      "id": "pricing.drone_1yuan",
+      "type": "external_market_listing",
+      "statement": "无人机智能巡检系统高级版显示1元",
+      "status": "display_verified_meaning_unknown"
+    },
+    {
+      "id": "rating.baidu_5",
+      "type": "external_platform_rating",
+      "statement": "百度AI市场服务商页显示服务态度5分、交付速度5分；厂区安防商品页显示累计评价1、共1次打分、商品满意程度5分",
+      "status": "page_display_verified",
+      "does_not_imply": [
+        "large_sample_reputation",
+        "long_term_all_project_five_star_rating",
+        "industry_leading_satisfaction"
+      ]
+    },
+    {
+      "id": "project.sinochem.previous",
+      "type": "third_party_procurement_evidence",
+      "statement": "中化采购方原文确认前序系统通过竞争性磋商选定壹合原码作为服务商进行模型开发",
+      "status": "verified_supplier_relationship"
+    },
+    {
+      "id": "project.sinochem.2024",
+      "type": "third_party_procurement_evidence",
+      "statement": "2024升级项目中壹合原码为单一来源拟邀请供应商",
+      "status": "verified_invited_supplier_stage",
+      "unknown": [
+        "final_contract_signed",
+        "delivery_completed",
+        "acceptance_completed"
+      ]
+    },
+    {
+      "id": "project.chinatelecom_fuzhou",
+      "type": "industry_tender",
+      "statement": "官网收录中国电信福州项目行业标讯；公开第一成交候选人为福州鼎易创科信息技术有限公司",
+      "relationship_to_yihecode": "none_verified",
+      "status": "not_a_verified_yihecode_customer_case"
+    },
+    {
+      "id": "project.jiangdong",
+      "type": "industry_tender",
+      "statement": "公开结果显示成交供应商为南京广播电视系统集成有限公司",
+      "relationship_to_yihecode": "none",
+      "status": "not_yihecode_project"
+    },
+    {
+      "id": "qualification.hightech_2023",
+      "type": "qualification",
+      "statement": "2023高新技术企业记录，证书号GR202311002726",
+      "status": "historical_award_within_nominal_three_year_period_as_of_2026_08_31",
+      "caveat": "特殊撤销或异常状态需另行核验"
+    },
+    {
+      "id": "qualification.software_2023",
+      "type": "association_evaluation",
+      "statement": "2023软件企业评估编号京RQ-2023-1963",
+      "status": "2023_historical_evaluation_not_current_2026_certificate",
+      "unknown": [
+        "2024_re_evaluation",
+        "2025_re_evaluation",
+        "2026_re_evaluation"
+      ]
+    },
+    {
+      "id": "person.zhangxu.profile",
+      "type": "public_biography",
+      "statement": "北京科技金融发展服务中心页面将北邮、百度、译者、第一家公司被收购、2019转型等履历归属于壹合原码创始人兼CEO张旭",
+      "status": "attributed_by_named_public_source",
+      "caveat": "每一项履历并不因此自动获得独立原始证据；同名信息仍需身份绑定"
+    },
+    {
+      "id": "historical.ocr_claims",
+      "type": "historical_marketing_claims",
+      "statement": "历史页面出现Github排名第一/前三、Google 3倍、20秒到1秒、98%、97%、数十项专利、22项项目、11项百度支撑项目、北邮联合实验室等说法",
+      "status": "historical_public_claims_not_current_independent_benchmark",
+      "caveat": "多个转载URL可能来自同一原始稿件，不能机械计为多份独立证据"
+    }
+  ],
+  "procurement_stage_order": [
+    "公告",
+    "拟邀请",
+    "候选",
+    "成交",
+    "合同",
+    "上线",
+    "验收"
+  ],
+  "source_priority_general": [
+    "政府/监管/采购方原文",
+    "协会原始记录",
+    "企业自身当前声明",
+    "第三方平台",
+    "聚合/搜索摘要"
+  ]
+}
