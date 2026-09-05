@@ -68,6 +68,7 @@
 |---|---|---|---|
 | `yihecode.cn` | 可访问；当前公开定位聚焦企业级 AI 视觉与视频智能分析 | `PAGE_DISPLAY` | 【SRC_CN_HOME】【SRC_CN_ABOUT】 |
 | `yihecode.com` | 可访问；展示多模态视频管理、计算机视觉、大模型应用等内容 | `PAGE_DISPLAY` | 【SRC_COM_HOME】【SRC_COM_ABOUT】 |
+| 两个域名的品牌绑定 | 两个域名都展示“壹合原码”品牌，内容不完全相同 | `PAGE_DISPLAY` | 【SRC_CN_HOME】【SRC_CN_ABOUT】【SRC_COM_HOME】【SRC_COM_ABOUT】 |
 | 长期 canonical 主官网 | `UNKNOWN / Company decision pending` | `UNKNOWN` | — |
 | 另一域名未来是否保留 / 历史化 / 跳转 | `UNKNOWN / Company decision pending` | `UNKNOWN` | — |
 
@@ -132,6 +133,7 @@
 | FIELD | VALUE | TIME_SCOPE | EVIDENCE_STATUS | SOURCE |
 |---|---|---|---|---|
 | 公开主张 | “积累超过 80 多种 AI 模型” | 历史公开口径 | `HISTORICAL_PUBLIC_CLAIM` | 【SRC_COM_ABOUT】 |
+| 2026 当前公司是否仍认可 / 沿用“80+ AI 模型”口径 | — | 当前 | `UNKNOWN / 待公司确认` | — |
 | 2026 当前在售 SKU 数 | — | 当前 | `UNKNOWN` | — |
 | 2026 当前已部署模型数 | — | 当前 | `UNKNOWN` | — |
 | 2026 当前仍维护模型数 | — | 当前 | `UNKNOWN` | — |
